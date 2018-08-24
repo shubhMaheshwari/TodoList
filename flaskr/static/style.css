@@ -9,3 +9,16 @@ html, body {
     height: 100%;
     background-size: cover;
 }
+
+#login_card {
+    top: 25%;
+    left: 35%;
+    position: fixed;
+    width: 30%;
+    padding: 15px;
+}
+
+input::placeholder {
+    color: black;
+    opacity: 0.7;
+}

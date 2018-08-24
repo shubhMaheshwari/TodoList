@@ -1,20 +1,10 @@
-// Or with jQuery
-// document.addEventListener('DOMContentLoaded', function() {
-// var elems = document.querySelectorAll('.modal');
-// var instances = M.Modal.init(elems, options);
-// });
-
-
 hormones=[ 'Dopamine' ,'Seretonine' ,'Oxytocin' ,'Aderline' ,'Cortisol/Stress']
 hormone_color={ 'Dopamine': 'blue' ,'Seretonine': 'yellow' ,'Oxytocin' : 'pink' ,'Aderline' : 'red','Cortisol/Stress': 'black'}
 
 $(document).ready(function(){
     $('.modal').modal();
-	/* JS when the page loads */
-	// $('ul.tabs').tabs({
-	//   swipeable: true,
-	//   responsiveThreshold: Infinity
-	// });
+
+	$('#register_modal').modal();
 	window.myLine = {}
 	hormones.map( hormone => {
 		var ctx = document.getElementById(hormone+"_canvas").getContext('2d');

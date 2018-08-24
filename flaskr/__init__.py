@@ -1,7 +1,8 @@
 import os
-from flask import Flask,Blueprint, render_template
+from flask import Flask,Blueprint, render_template, request, make_response,session
 import json
 from . import db
+from . import login
 
 def create_app(test_config=None):
 	# create and configure the app
@@ -10,9 +11,7 @@ def create_app(test_config=None):
 		SECRET_KEY='dev',
 		DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
 	)
-	db.init_app(app)
-
-
+	
 	if test_config is None:
 		# load the instance config, if it exists, when not testing
 		app.config.from_pyfile('config.py', silent=True)
@@ -26,13 +25,31 @@ def create_app(test_config=None):
 	except OSError:
 		pass
 
+	db.init_app(app)
+
+	# Login Page
+	app.register_blueprint(login.bp)
+
 	# a simple page that says hello
-	@app.route('/')
-	def Homepage():
+	@app.route('/' , methods=["GET" , "POST"])
+	def homepage():
 		with open('./flaskr/static/basic.json' , 'r') as f:
 			data = json.load(f)
 
-		return render_template('index.html', tabs=data['tabs'], emotions=data['emotions'], star_color=data['star_color'], task_list=data['task_list'],hormones=data['hormones'])
+		try:
+			user_id = session['user_id']
+		except:
+			user_id = False
+		# print(db.query_db("SELECT * FROM user"))
+		return render_template('index.html', tabs=data['tabs'], emotions=data['emotions'], star_color=data['star_color'], task_list=data['task_list'],hormones=data['hormones'], in_session = user_id)
+
+
+	# Error handing for 404
+	@app.errorhandler(404)
+	def not_found(error):
+		resp = make_response(render_template('error.html'), 404)
+		resp.headers['X-Something'] = 'Nothing here'
+		return resp
 
 	return app
 
