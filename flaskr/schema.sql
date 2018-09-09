@@ -7,8 +7,7 @@ CREATE TABLE user (
   password TEXT NOT NULL,
   hormone_history TEXT DEFAULT NULL,
 
-  Trust INTEGER DEFAULT 5,
-  Confidence INTEGER DEFAULT 5,
+  Love INTEGER DEFAULT 5,
   Reward INTEGER DEFAULT 5,
   Sleep INTEGER DEFAULT 5,
   Money_Credit INTEGER DEFAULT 5,
@@ -19,13 +18,11 @@ CREATE TABLE user (
 CREATE TABLE todo_list (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT UNIQUE NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  periodic INT DEFAULT 0,
-  deadline TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  body TEXT NOT NULL,
-
-  Trust INTEGER DEFAULT 0,
-  Confidence INTEGER DEFAULT 0,
+  periodic INTEGER DEFAULT 0,
+  body TEXT,
+  snooze INTEGER DEFAULT 60,
+    
+  Love INTEGER DEFAULT 0,
   Reward INTEGER DEFAULT 0,
   Sleep INTEGER DEFAULT 0,
   Money_Credit INTEGER DEFAULT 0,
@@ -34,12 +31,13 @@ CREATE TABLE todo_list (
 
 );
 
-
-CREATE TABLE post (
+CREATE TABLE user_task (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  author_id INTEGER NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  title TEXT NOT NULL,
-  body TEXT NOT NULL,
-  FOREIGN KEY (author_id) REFERENCES user (id)
-);
+  user_id INTEGER NOT NULL,
+  task_id INTEGER UNIQUE NOT NULL,
+  deadline INTEGER DEFAULT 1440,
+  created TIMESTAMP NOT NULL DEFAULT  (datetime('now','localtime')),
+  FOREIGN KEY (task_id) REFERENCES todo_list (id)
+  FOREIGN KEY (user_id) REFERENCES user (id)
+  
+)

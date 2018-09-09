@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Todo Task App</title>
+  <title>Plan with me</title>
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -18,11 +18,18 @@
   <!-- Chart -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
 
+  <!-- Socket -->
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+
+  <!-- Logo -->
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
   <script src={{ url_for('static', filename='main.js') }} ></script>
   <link rel="stylesheet" type=
   "text/css" href={{ url_for('static', filename='style.css') }}/>
  </head>
 <body class="container bg">
+      
   {% if in_session  %}  
   <div class = "row">
     <div class = "col s12">
@@ -44,7 +51,7 @@
             <span style="float:left" class="card-title">{{ emotion['name'] }} </span>
               <div style="float:right" class="card-title"> 
                 {% for i in range(emotion['value']) %}
-                  <i class="material-icons" style={{ "font-size:40px;color:{}".format(star_color[i]) }}>star</i>
+                  <i class="material-icons" style={{ "font-size:40px;color:{}".format(star_color[emotion['value']]) }}> {{ emotion['icon'] }}</i>
                 {% endfor %}
               </div>
           </div>
@@ -55,18 +62,37 @@
       </ul>
 
     </div>
-    <div id = "tasks" class = "col s12">
-      <h4 align="center"> Tasks List </h4>
-      <ul>
-      {% for task in task_list %}
-        <li>
-          <div class="card collapsible-header" style="margin: 10px">
-            <span style="float:left" class="card-title">{{ task['name'] }} </span>
-            <div class="card-content">
+    <div id = "activity" class = "col s12">
+      <h4 align="center"> My Activity List </h4>
+      <ul class="collapsible" id="activity_collapsible">
+      {% for activity in activity_list %}
+      <li>
+        <div class="collapsible-header" style="margin: 10px">
+          <span style="float:left" class="card-title">{{ activity['title'] }} </span>
+          <div class="progress red lighten-4">
+            <div class="determinate red" style="width:{{ time_left[activity['id']] }}%" ></div>
+          </div>
+        </div>
+        <div class="card collapsible-body white" style="padding:1px" >
+          <form action={{ "/delete_activity/" + activity['id']|string }} method="post" >
+            <div class="card-content" > 
 
+              {% if activity['body'] %}
+              {% for subtask in activity['body'].split(';') %}      
+                <div class="md-checkbox">
+                    <input id={{ "subtask_{}_{}".format(activity['id'], loop.index )  }} name={{ "subtask_{}_{}".format(activity['id'], loop.index )  }} type="checkbox">
+                    <label for={{ "subtask_{}_{}".format(activity['id'], loop.index )  }}> {{ subtask }} </label>
+                </div>
+              {% endfor %}
+              {% endif %}
             </div>
-          <div>
-        </li>
+            <div class="card-action">
+              <button class="btn"> Update it </button>
+              <input type="submit" style="float:right" class="btn" value="Completed" />          
+            </div>
+          </form>  
+          </div>
+      </li>
       {% endfor %}
       </ul>
     </div>
@@ -89,20 +115,49 @@
 
   </div> 
 
-  <!-- Modal Button -->
+  <!-- Add Activity Modal Button -->
   <div class="fixed-action-btn">
-    <button data-target="add_task_modal" class="btn-floating btn-large red waves-effect btn modal-trigger">
+    <button data-target="add_activity_modal" class="btn-floating btn-large red waves-effect btn modal-trigger">
       <i class="large material-icons">add</i>
     </button>
   </div>
 
-  <!-- Modal to add task -->
-  <div id="add_task_modal" class="modal">
-    <div class="modal-content">
-      <h4 style="text-align: center"> Add your new task </h4>
-      <input style="width:85%" type="text" placeholder="Add or say the task..." />
-      <a href="#!" class="modal-close btn-floating"><i class="material-icons">hearing</i></a>
-      <a href="#!" class="modal-close btn-flat green-lighten">Submit</a>
+  <!-- Modal to add activity -->
+  <div id="add_activity_modal" class="modal">
+    <div style="width: 90%" class="modal-content container">
+      <h4 style="text-align: center" class="row"> Add your new activity </h4>
+
+      <form action="/add_activity" method="post">
+        
+        <div class="row input-field">
+          <input class="col s8 autocomplete" style="width:85%" name="activity_title" type="text" placeholder="eg. Go to gym" required/>
+          <!-- <a href="#!" class=" col modal-close btn-floating"><i class="material-icons">hearing</i></a>           -->
+        </div>
+        <div class="row" >
+            <h6 class="col s12">Consequence on completing</h6>
+        </div> 
+
+        {% for i in range(0,6,2) %}                
+          <div class="row">
+            <p class="col s2" >{{ emotions[i]['name'] }}</p>
+            <p style="text-align: center" class="range-field col s4">
+              <input style="width: 60%" type="range" name={{ emotions[i]['name'] + "_new" }} id={{ emotions[i]['name'] + "_new_activity" }} min="-3" max="3" />
+            </p>            
+            <p class="col s2" >{{ emotions[i+1]['name'] }}</p>            
+            <p style="text-align: center" class="range-field col s4">
+              <input style="width: 60%" type="range" name={{ emotions[i+1]['name'] + "_new" }} id={{ emotions[i+1]['name'] + "_new_activity" }} min="-3" max="3" />
+            </p>
+          </div>
+        {% endfor %}
+        <input class="row" style="width:85%" name="description" id="description" type="text" placeholder="Body: eg. Reach gym. Do biceps. Eat eggs"/>        
+        <div class="row">
+          <p class="col s2" >Deadline:</p>
+          <input type="text" name="date" class="col s4 datepicker" placeholder="Date">
+          <input type="text" name="time" class="col s4 timepicker" placeholder="Time">
+        </div>
+        <input class="row" name="snooze" type="number" placeholder="Snooze(minutes)"/>
+        <input class="btn modal-close btn-flat" type="submit" value="Add Me" />        
+      </form>
 
     </div>
   </div>
@@ -125,7 +180,7 @@
         
     </div>
 
-    <!-- Modal to add task -->
+    <!-- Modal to register user -->
     <div id="register_modal" class="modal">
       <div class="modal-content">
   

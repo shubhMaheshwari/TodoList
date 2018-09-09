@@ -6,7 +6,7 @@
     },
     {
       "data": "0 1 2 3 4 5 6 7",
-      "name": "Seretonine"
+      "name": "Serotonin"
     },
     {
       "data": "0 1 2 3 4 5 6 7",
@@ -14,31 +14,18 @@
     },
     {
       "data": "0 1 2 3 4 5 6 7",
-      "name": "Aderline"
+      "name": "Adrenaline"
     },
     {
       "data": "0 1 2 3 4 5 6 7",
       "name": "Cortisol/Stress"
     }
   ],
-  "task_list": [
-    {
-      "periodic_time": "24 hours",
-      "name": "Sleep 8 hours",
-      "periodic": true
-    },
-    {
-      "deadline": "12:00",
-      "name": "DIP Assignment 2",
-      "periodic": false
-    },
-    {
-      "periodic_time": "12 hours",
-      "name": "CP",
-      "periodic": true
-    }
-  ],
   "tabs": [
+    {
+      "id": "activity",
+      "name": "Activity"
+    },
     {
       "id": "emotions",
       "name": "Emotions"
@@ -46,19 +33,15 @@
     {
       "id": "hormones",
       "name": "Hormones"
-    },
-    {
-      "id": "tasks",
-      "name": "Tasks"
     }
   ],
   "star_color": [
     "red",
     "red",
     "red",
-    "yellow",
-    "yellow",
-    "yellow",
+    "black",
+    "black",
+    "black",
     "blue",
     "blue",
     "green",
@@ -66,32 +49,35 @@
   ],
   "emotions": [
     {
-      "name": "Trust",
-      "value": 5
-    },
-    {
-      "name": "Confidence",
-      "value": 5
+      "name": "Love",
+      "value": 5,
+      "icon": "wc"
     },
     {
       "name": "Reward",
-      "value": 5
+      "value": 5,
+      "icon": "stars"
     },
     {
       "name": "Sleep",
-      "value": 5
+      "value": 5,
+      "icon": "brightness_3"
     },
     {
       "name": "Energy",
-      "value": 5
+      "value": 5,
+      "icon": "motorcycle"
+      
     },
     {
       "name": "Stress",
-      "value": 5
+      "value": 5,
+      "icon": "thumb_down"
     },
     {
       "name": "Money",
-      "value": 5
+      "value": 5,
+      "icon": "monetization_on"
     }
   ]
 }

@@ -1,4 +1,4 @@
-# Todo Tasks Using person's Emotions
+# Todo Activitys Using person's Emotions
 
 # Initlailize DB
 ```

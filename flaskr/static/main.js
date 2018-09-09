@@ -1,10 +1,31 @@
-hormones=[ 'Dopamine' ,'Seretonine' ,'Oxytocin' ,'Aderline' ,'Cortisol/Stress']
-hormone_color={ 'Dopamine': 'blue' ,'Seretonine': 'yellow' ,'Oxytocin' : 'pink' ,'Aderline' : 'red','Cortisol/Stress': 'black'}
+hormones=[ 'Dopamine' ,'Serotonin' ,'Oxytocin' ,'Adrenaline' ,'Cortisol/Stress']
+hormone_color={ 'Dopamine': 'blue' ,'Serotonin': 'yellow' ,'Oxytocin' : 'pink' ,'Adrenaline' : 'red','Cortisol/Stress': 'black'}
 
 $(document).ready(function(){
-    $('.modal').modal();
+
+	// Update the task list when updated
+	resp = $.get( "show_activities" );
+
+	$('input.autocomplete').autocomplete({
+		data: resp.responseJSON,
+	  });	
+
+	// Start modals
+	$('.modal').modal();
 
 	$('#register_modal').modal();
+
+	// Start datepicker
+	var date = new Date();
+	$('.datepicker').pickadate({
+		format: 'dd,mm,yyyy',
+		defaultDate: new Date(),
+		setDefaultDate: true,		
+	});
+	$('.timepicker').pickatime({
+		defaultTime: 'now',
+		twelveHour: false		
+	});
 	window.myLine = {}
 	hormones.map( hormone => {
 		var ctx = document.getElementById(hormone+"_canvas").getContext('2d');
@@ -53,5 +74,3 @@ $(document).ready(function(){
 
 	})
 });
-
-
